@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - FindThem</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <header>
+                <div class="logo">
+                    <img src="/images/logo.png" alt="FindThem Logo">
+                </div>
+                <nav>
+                    <a href="#">HOME</a>
+                    <a href="#">ABOUT US</a>
+                    <a href="#">CONTACT</a>
+                    <a href="login.html" class="active-link">LOG IN</a>
+                </nav>
+            </header>
+            <main>
+                <h1>Sign up</h1>
+                <form id="signupForm">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Create Account</button>
+                </form>
+                <div id="message" class="message-display"></div>
+                <div class="or-divider">
+                    <p>or <a href="login.html">Log in</a></p>
+                </div>
+            </main>
+        </div>
+        <div class="image-section" style="background-image: url('images/auth-bg.png');">
+        </div>
+    </div>
+    <script src="js/signup.js"></script>
+</body>
+</html>
