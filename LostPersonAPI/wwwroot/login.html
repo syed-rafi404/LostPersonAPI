@@ -7,53 +7,54 @@
     <title>Log In - FindThem</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="container">
-        <div class="form-section">
-            <header>
-                <div class="logo">
-                    <img src="/images/logo.png" alt="FindThem Logo">
-                </div>
-
-
-
-
-
-
-                <nav>
-                    <a href="#">HOME</a>
-                    <a href="#">ABOUT US</a>
-                    <a href="#">CONTACT</a>
-                    <a href="signup.html" class="active-link">SIGN UP</a>
-                </nav>
-            </header>
-            <main>
-                <h1>Log in</h1>
-                <form id="loginForm">
-                    <div class="input-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
+<body class="auth-page">
+    
+        <div class="container">
+            <div class="form-section">
+                <header>
+                    <div class="logo">
+                        <img src="/images/logo.png" alt="FindThem Logo">
                     </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+
+
+
+
+
+
+                    <nav>
+                        <a href="#">HOME</a>
+                        <a href="#">ABOUT US</a>
+                        <a href="#">CONTACT</a>
+                        <a href="signup.html" class="active-link">SIGN UP</a>
+                    </nav>
+                </header>
+                <main>
+                    <h1>Log in</h1>
+                    <form id="loginForm">
+                        <div class="input-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="options">
+                            <label><input type="checkbox"> Remember Me</label>
+                            <a href="#">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="btn-primary">Log In</button>
+                    </form>
+                    <div id="errorMessage" class="error-message"></div>
+                    <div class="or-divider">
+                        <p>or Log in</p>
                     </div>
-                    <div class="options">
-                        <label><input type="checkbox"> Remember Me</label>
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="btn-primary">Log In</button>
-                </form>
-                <div id="errorMessage" class="error-message"></div>
-                <div class="or-divider">
-                    <p>or Log in</p>
-                </div>
-            </main>
+                </main>
+            </div>
+            <div class="image-section" style="background-image: url('images/auth-bg.png');">
+
+            </div>
         </div>
-        <div class="image-section" style="background-image: url('images/auth-bg.png');">
-           
-        </div>
-    </div>
-    <script src="js/login.js"></script>
-</body>
+        <script src="js/login.js"></script>
+    </body>
 </html>

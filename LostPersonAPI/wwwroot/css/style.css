@@ -1,7 +1,7 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 :root {
-    --primary-color: #4A148C; 
+    --primary-color: #4A148C;
     --text-color: #333;
     --background-color: #FFFFFF;
     --light-gray: #F0F0F0;
@@ -18,31 +18,75 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
+    line-height: 1.6;
 }
 
-.container {
+/* --- Styles for Login/Signup Pages --- */
+
+.auth-page .container {
     display: flex;
     min-height: 100vh;
 }
 
-.form-section {
+.auth-page .form-section {
     flex: 1;
     padding: 3rem 5rem;
     display: flex;
     flex-direction: column;
 }
 
-header {
+.auth-page header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 4rem;
 }
 
-.logo {
-    font-weight: 600;
-    font-size: 1.5rem;
+.auth-page main {
+    max-width: 400px;
+    margin: auto;
+    width: 100%;
 }
+
+    .auth-page main h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+.auth-page .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.auth-page .or-divider {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #aaa;
+}
+
+.auth-page .image-section {
+    flex: 1;
+    background-image: url('../images/auth-bg.png');
+    background-size: cover;
+    background-position: center;
+}
+
+
+/* --- Shared Styles for All Pages --- */
+
+.logo {
+    width: 180px;
+    height: 50px;
+}
+
+    .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 
 nav a {
     text-decoration: none;
@@ -56,19 +100,8 @@ nav a {
         padding-bottom: 5px;
     }
 
-main {
-    max-width: 400px;
-    margin: auto;
-    width: 100%;
-}
-
-    main h1 {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-    }
-
 .input-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
     .input-group label {
@@ -77,22 +110,16 @@ main {
         font-weight: 500;
     }
 
-    .input-group input {
+    .input-group input,
+    .input-group textarea {
         width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--border-color);
         border-radius: 8px;
         background-color: var(--light-gray);
         font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
     }
-
-.options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-}
 
 .btn-primary {
     width: 100%;
@@ -111,46 +138,11 @@ main {
         background-color: #6A1B9A;
     }
 
-.or-divider {
-    text-align: center;
-    margin-top: 1.5rem;
-    color: #aaa;
-}
-
-.image-section {
-    flex: 1;
-    background-color: var(--primary-color);
-    background-image: url('../images/auth-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-
-.error-message {
-    color: #D32F2F;
-    background-color: #FFCDD2;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 1rem;
-    display: none; 
-    text-align: center;
-}
-.logo {
-    width: 180px; 
-    height: 50px; 
-}
-
-    .logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; 
-    }
 .message-display {
     padding: 10px;
     border-radius: 5px;
     margin-top: 1rem;
-    display: none; 
+    display: none;
     text-align: center;
 }
 
@@ -162,4 +154,76 @@ main {
 .error-message {
     color: #D32F2F;
     background-color: #FFCDD2;
+}
+
+
+/* --- Final, Polished Styles for Report Submission Page --- */
+
+.container-full {
+    max-width: 1400px; /* Increased max-width */
+    margin: 0 auto;
+    padding: 2rem 3rem; /* Increased padding */
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.page-main h1 {
+    text-align: left;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.form-main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 3.5rem; /* Increased gap */
+}
+
+.form-section-column h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 1.5rem;
+}
+
+#map {
+    height: 350px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    z-index: 1;
+}
+
+.coordinates-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-submit-area {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+    .form-submit-area .btn-primary {
+        max-width: 300px;
+    }
+
+/* Custom gradient background for the report submission page */
+.report-page {
+    background: linear-gradient(to bottom, #d9c9e8, #FFFFFF);
 }

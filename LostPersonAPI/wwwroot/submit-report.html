@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Report - FindThem</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="report-page">
+    <div class="container-full">
+        <header class="page-header">
+            <div class="logo">
+                <img src="/images/logo.png" alt="FindThem Logo">
+            </div>
+            <nav>
+                <a href="#">DASHBOARD</a>
+                <a href="submit-report.html" class="active-link">SUBMIT REPORT</a>
+                <a href="#" id="logoutButton">LOG OUT</a>
+            </nav>
+        </header>
+        <main class="page-main">
+            <h1>Report a Missing Person</h1>
+
+            <form id="reportForm">
+                <!-- Main two-column grid for the entire form -->
+                <div class="form-main-grid">
+
+                    <!-- Left Column: Personal and Physical Details -->
+                    <div class="form-section-column">
+                        <h2>Details</h2>
+                        <div class="form-section-grid">
+                            <div class="input-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="age">Age</label>
+                                <input type="number" id="age" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="gender">Gender</label>
+                                <input type="text" id="gender" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="height">Height (cm)</label>
+                                <input type="number" id="height" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="weight">Weight (kg)</label>
+                                <input type="number" id="weight" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="skinColor">Skin Color</label>
+                                <input type="text" id="skinColor" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="clothing">Clothing Description</label>
+                            <textarea id="clothing" rows="3" required></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label for="medicalCondition">Known Medical Conditions</label>
+                            <textarea id="medicalCondition" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Location Details and Map -->
+                    <div class="form-section-column">
+                        <h2>Last Seen Location</h2>
+                        <div class="input-group">
+                            <label for="lastSeenDate">Date and Time Last Seen</label>
+                            <input type="datetime-local" id="lastSeenDate" required>
+                        </div>
+                        <div class="map-container">
+                            <label>Click on the map to set location</label>
+                            <div id="map"></div>
+                        </div>
+                        <div class="coordinates-group">
+                            <div class="input-group">
+                                <label for="lastSeenLatitude">Latitude</label>
+                                <input type="number" step="any" id="lastSeenLatitude" required readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="lastSeenLongitude">Longitude</label>
+                                <input type="number" step="any" id="lastSeenLongitude" required readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button Area -->
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-primary">Submit Report</button>
+                    <div id="message" class="message-display"></div>
+                </div>
+            </form>
+        </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="js/submit-report.js"></script>
+</body>
+</html>
