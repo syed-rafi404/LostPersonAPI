@@ -18,14 +18,19 @@ namespace LostPersonAPI.Data
         public DbSet<Assigned> AssignedVolunteers { get; set; }
         public DbSet<Alert> Alerts { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        public DbSet<ActiveReport> ActiveReports { get; set; }
+        public DbSet<FoundReport> FoundReports { get; set; }
+        public DbSet<ClosedReport> ClosedReports { get; set; }
 
-            modelBuilder.Entity<MissingPersonReport>().HasKey(m => m.ReportID);
-            modelBuilder.Entity<Media>().HasKey(m => m.MediaID);
-            modelBuilder.Entity<Alert>().HasKey(a => a.AlertID);
-            modelBuilder.Entity<Assigned>().HasKey(a => new { a.ReportID, a.VolunteerID });
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Add this configuration to map models to views
+            builder.Entity<ActiveReport>().ToView("ActiveReports");
+            builder.Entity<FoundReport>().ToView("FoundReports");
+            builder.Entity<ClosedReport>().ToView("ClosedReports");
         }
     }
 }

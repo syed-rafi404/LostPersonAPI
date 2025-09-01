@@ -16,22 +16,35 @@
             <div class="logo">
                 <img src="/images/logo.png" alt="FindThem Logo">
             </div>
+            <!-- In submit-report.html -->
+            <!-- In submit-report.html -->
+            <!-- In submit-report.html -->
             <nav>
-                <a href="#">DASHBOARD</a>
+                <a href="dashboard.html">DASHBOARD</a>
                 <a href="submit-report.html" class="active-link">SUBMIT REPORT</a>
+                <a href="search.html">ADVANCED SEARCH</a>
                 <a href="#" id="logoutButton">LOG OUT</a>
             </nav>
+
+
+
+
         </header>
         <main class="page-main">
             <h1>Report a Missing Person</h1>
-
             <form id="reportForm">
                 <!-- Main two-column grid for the entire form -->
                 <div class="form-main-grid">
-
                     <!-- Left Column: Personal and Physical Details -->
                     <div class="form-section-column">
                         <h2>Details</h2>
+
+                        <!-- Keep this single photo input -->
+                        <div class="input-group">
+                            <label for="photo">Photo of Missing Person</label>
+                            <input type="file" id="photo" accept="image/png, image/jpeg" class="form-control-file">
+                        </div>
+
                         <div class="form-section-grid">
                             <div class="input-group">
                                 <label for="name">Full Name</label>
@@ -45,6 +58,7 @@
                                 <label for="gender">Gender</label>
                                 <input type="text" id="gender" required>
                             </div>
+                            <!-- The duplicate photo input was here and has been removed -->
                             <div class="input-group">
                                 <label for="height">Height (cm)</label>
                                 <input type="number" id="height" required>
@@ -67,7 +81,6 @@
                             <textarea id="medicalCondition" rows="3"></textarea>
                         </div>
                     </div>
-
                     <!-- Right Column: Location Details and Map -->
                     <div class="form-section-column">
                         <h2>Last Seen Location</h2>
@@ -91,7 +104,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Submit Button Area -->
                 <div class="form-submit-area">
                     <button type="submit" class="btn-primary">Submit Report</button>

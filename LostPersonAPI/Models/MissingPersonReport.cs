@@ -4,6 +4,8 @@ namespace LostPersonAPI.Models
 {
     public class MissingPersonReport
     {
+
+        [Key]
         public int ReportID { get; set; }
         public int ReportedBy { get; set; } // Foreign Key
         public int? ApprovedBy { get; set; } // Foreign Key, can be null
@@ -21,5 +23,6 @@ namespace LostPersonAPI.Models
         public double? LastSeenLongitude { get; set; }
         public string? Status { get; set; }
         public DateTime ReportingDate { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

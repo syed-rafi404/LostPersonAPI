@@ -1,54 +1,73 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
+    // --- Element References ---
     const reportForm = document.getElementById('reportForm');
     const messageDiv = document.getElementById('message');
     const logoutButton = document.getElementById('logoutButton');
     const latInput = document.getElementById('lastSeenLatitude');
     const lonInput = document.getElementById('lastSeenLongitude');
+    const photoInput = document.getElementById('photo'); // The file input
 
-    // --- MAP INITIALIZATION ---
-    const map = L.map('map').setView([51.505, -0.09], 13); // Default view (London)
-    let marker = null;
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // Function to update marker and form fields
-    function updateMarker(lat, lng) {
-        latInput.value = lat.toFixed(6);
-        lonInput.value = lng.toFixed(6);
-
-        if (marker) {
-            marker.setLatLng([lat, lng]);
-        } else {
-            marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-
-            // Add drag event listener to the marker
-            marker.on('dragend', function (event) {
-                const position = marker.getLatLng();
-                updateMarker(position.lat, position.lng);
-            });
-        }
-        map.panTo([lat, lng]);
-    }
-
-    // Listen for clicks on the map
-    map.on('click', function (e) {
-        updateMarker(e.latlng.lat, e.latlng.lng);
-    });
-    // --- END OF MAP LOGIC ---
-
-
-    // --- Authentication and Form Submission Logic (mostly unchanged) ---
+    // --- Authentication Check ---
     const token = localStorage.getItem('jwtToken');
     if (!token) {
         window.location.href = '/login.html';
         return;
     }
 
+    // --- Leaflet Map Initialization ---
+    const map = L.map('map').setView([51.505, -0.09], 13);
+    let marker = null;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    function updateMarker(lat, lng) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lng]).addTo(map);
+        latInput.value = lat.toFixed(6);
+        lonInput.value = lng.toFixed(6);
+    }
+
+    map.on('click', function (e) {
+        updateMarker(e.latlng.lat, e.latlng.lng);
+    });
+
+    // --- Main Form Submission Logic ---
     reportForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
+        let photoUrl = null;
+
+        // Step 1: Upload the photo if one is selected
+        if (photoInput.files.length > 0) {
+            displayMessage('Uploading photo, please wait...', 'info');
+            const formData = new FormData();
+            formData.append('file', photoInput.files[0]);
+
+            try {
+                const uploadResponse = await fetch('/api/FileUpload', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData,
+                });
+
+                if (uploadResponse.ok) {
+                    const result = await uploadResponse.json();
+                    photoUrl = result.url; // Capture the URL from the server
+                } else {
+                    displayMessage('Photo upload failed. Please try again.', 'error');
+                    return; // Stop if photo upload fails
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                displayMessage('A network error occurred during photo upload.', 'error');
+                return;
+            }
+        }
+
+        // Step 2: Gather all report data, including the new photo URL
         const reportData = {
             name: document.getElementById('name').value,
             age: parseInt(document.getElementById('age').value),
@@ -61,8 +80,11 @@
             lastSeenDate: document.getElementById('lastSeenDate').value,
             lastSeenLatitude: parseFloat(latInput.value),
             lastSeenLongitude: parseFloat(lonInput.value),
+            photoUrl: photoUrl // Add the photo URL to the report object
         };
 
+        // Step 3: Submit the complete report data
+        displayMessage('Submitting report...', 'info');
         try {
             const response = await fetch('/api/MissingPersonReports', {
                 method: 'POST',
@@ -82,8 +104,7 @@
                 }
             } else {
                 const errorData = await response.json();
-                const errorMessage = errorData.title || 'Submission failed.';
-                displayMessage(errorMessage, 'error');
+                displayMessage(errorData.title || 'Submission failed.', 'error');
             }
         } catch (error) {
             console.error('Error submitting report:', error);
@@ -91,14 +112,17 @@
         }
     });
 
-    logoutButton.addEventListener('click', () => {
+    // --- Helper Functions ---
+    logoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
         localStorage.removeItem('jwtToken');
         window.location.href = '/login.html';
     });
 
     function displayMessage(message, type) {
         messageDiv.textContent = message;
-        messageDiv.className = 'message-display ' + (type === 'success' ? 'success-message' : 'error-message');
+        const typeClass = type === 'success' ? 'success-message' : (type === 'error' ? 'error-message' : 'info-message');
+        messageDiv.className = 'message-display ' + typeClass;
         messageDiv.style.display = 'block';
     }
 });

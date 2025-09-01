@@ -4,6 +4,7 @@ using LostPersonAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LostPersonAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250831102023_AddPhotoUrlToReports")]
+    partial class AddPhotoUrlToReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,26 +61,20 @@ namespace LostPersonAPI.Migrations
 
             modelBuilder.Entity("LostPersonAPI.Models.Assigned", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ReportID")
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("VolunteerID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AssignedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ReportID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("VolunteerID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("ReportID", "VolunteerID");
 
                     b.ToTable("AssignedVolunteers");
                 });
@@ -430,33 +427,6 @@ namespace LostPersonAPI.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("ActiveReport", b =>
-                {
-                    b.HasBaseType("LostPersonAPI.Models.MissingPersonReport");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("ActiveReports", (string)null);
-                });
-
-            modelBuilder.Entity("ClosedReport", b =>
-                {
-                    b.HasBaseType("LostPersonAPI.Models.MissingPersonReport");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("ClosedReports", (string)null);
-                });
-
-            modelBuilder.Entity("FoundReport", b =>
-                {
-                    b.HasBaseType("LostPersonAPI.Models.MissingPersonReport");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("FoundReports", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

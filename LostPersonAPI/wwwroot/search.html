@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search - FindThem</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="report-page">
+    <div class="container-full">
+        <header class="page-header">
+            <div class="logo">
+                <img src="/images/logo.png" alt="FindThem Logo">
+            </div>
+            <nav>
+                <a href="dashboard.html">DASHBOARD</a>
+                <a href="submit-report.html">SUBMIT REPORT</a>
+                <a href="search.html" class="active-link">ADVANCED SEARCH</a>
+                <a href="#" id="logoutButton">LOG OUT</a>
+            </nav>
+        </header>
+        <main class="page-main">
+            <h1>Advanced Search</h1>
+
+            <!-- Search Form -->
+            <form id="searchForm" class="search-form">
+                <!-- ... your form rows are correct ... -->
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="searchName">Name</label>
+                        <input type="text" id="searchName" placeholder="Enter full or partial name">
+                    </div>
+                    <div class="input-group">
+                        <label for="searchStatus">Status</label>
+                        <select id="searchStatus">
+                            <option value="">Any</option>
+                            <option value="Active">Active</option>
+                            <option value="Found">Found</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="searchMinAge">Min Age</label>
+                        <input type="number" id="searchMinAge" placeholder="e.g., 18">
+                    </div>
+                    <div class="input-group">
+                        <label for="searchMaxAge">Max Age</label>
+                        <input type="number" id="searchMaxAge" placeholder="e.g., 65">
+                    </div>
+                    <div class="input-group">
+                        <label for="searchGender">Gender</label>
+                        <select id="searchGender">
+                            <option value="">Any</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-primary">Search</button>
+                    <button type="button" id="clearButton" class="btn-secondary">Clear</button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div id="resultsCount"></div>
+
+            <div id="reportsGrid" class="reports-grid-container">
+                <!-- Search results will be inserted here by JavaScript -->
+            </div>
+
+            <!-- ** THIS IS THE CORRECT PLACEMENT ** -->
+            <!-- The pagination controls are now OUTSIDE the reportsGrid -->
+            <div id="paginationControls" class="pagination-controls">
+                <button id="prevButton" class="btn-secondary" disabled>Previous</button>
+                <span id="pageInfo"></span>
+                <button id="nextButton" class="btn-secondary" disabled>Next</button>
+            </div>
+
+        </main>
+    </div>
+    <script src="js/search.js"></script>
+</body>
+</html>
