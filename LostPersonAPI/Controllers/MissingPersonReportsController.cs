@@ -2,15 +2,12 @@
 using LostPersonAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Add this using directive
-using System.Collections.Generic;   // Add this using directive
+using Microsoft.EntityFrameworkCore;
+using System; // Required for Math.Ceiling
 using System.Linq;
-using MySqlConnector;
 using System.Threading.Tasks;
 
 namespace LostPersonAPI.Controllers
-
-
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -24,19 +21,17 @@ namespace LostPersonAPI.Controllers
             _context = context;
         }
 
-        // POST: api/MissingPersonReports
-        // This endpoint is for creating a new report.
-        [HttpPost]
         // GET: api/MissingPersonReports
+        // This endpoint retrieves reports with filtering and pagination.
         [HttpGet]
         public async Task<ActionResult> GetReports(
-    [FromQuery] string? name,
-    [FromQuery] string? status,
-    [FromQuery] int? minAge,
-    [FromQuery] int? maxAge,
-    [FromQuery] string? gender,
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 8) // Set a default page size
+            [FromQuery] string? name,
+            [FromQuery] string? status,
+            [FromQuery] int? minAge,
+            [FromQuery] int? maxAge,
+            [FromQuery] string? gender,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 8)
         {
             var query = _context.MissingPersonReports.AsQueryable();
 
@@ -70,13 +65,37 @@ namespace LostPersonAPI.Controllers
             return Ok(response);
         }
 
+        // POST: api/MissingPersonReports
+        // This endpoint creates a new report.
+        [HttpPost]
+        public async Task<ActionResult<MissingPersonReport>> PostMissingPersonReport(MissingPersonReportDto reportDto)
+        {
+            var newReport = new MissingPersonReport
+            {
+                Name = reportDto.Name,
+                Age = reportDto.Age,
+                Gender = reportDto.Gender,
+                Status = "Active", // Always set new reports to Active
+                LastSeenDate = reportDto.LastSeenDate,
+                LastSeenLatitude = reportDto.LastSeenLatitude,
+                LastSeenLongitude = reportDto.LastSeenLongitude,
+                PhotoUrl = reportDto.PhotoUrl,
+                Height = reportDto.Height,
+                Weight = reportDto.Weight,
+                SkinColor = reportDto.SkinColor,
+                Clothing = reportDto.Clothing,
+                MedicalCondition = reportDto.MedicalCondition
+            };
 
+            _context.MissingPersonReports.Add(newReport);
+            await _context.SaveChangesAsync();
 
-
-
+            // Return a 201 Created response with a location header pointing to the new resource.
+            return CreatedAtAction(nameof(GetReportById), new { id = newReport.ReportID }, newReport);
+        }
 
         // GET: api/MissingPersonReports/5
-        // This endpoint is used by CreateReport to generate the location header.
+        // This endpoint retrieves a specific report by its ID.
         [HttpGet("{id}")]
         public async Task<ActionResult<MissingPersonReport>> GetReportById(int id)
         {
