@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Missing Person Detail - FindThem</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .detail-container { max-width: 1000px; margin: 0 auto; background:#fff; padding:2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
+        .detail-header { text-align:center; }
+        .detail-header h1 { font-size:3rem; color:#d40000; letter-spacing:2px; margin:0; }
+        .person-name { font-size:2rem; font-weight:700; margin:.25rem 0 1rem; color:#c13025; }
+        .detail-grid { display:grid; grid-template-columns: 1fr 320px; gap:2rem; align-items:start; }
+        .person-photo { width:100%; aspect-ratio:3/4; object-fit:cover; border:4px solid #111; background:#eee; cursor:pointer; }
+        .facts-list p { margin:.35rem 0; line-height:1.25; }
+        .highlight-box { border:2px solid #d40000; padding:1rem; margin-top:1.25rem; font-weight:600; line-height:1.35; background:#fff7f7; }
+        .last-seen-line { font-weight:800; margin-top:1rem; font-size:1.1rem; }
+        .meta-row { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem; font-size:.85rem; color:#666; }
+        .badge-status { display:inline-block; padding:.25rem .6rem; border-radius:4px; font-size:.75rem; font-weight:600; background:#555; color:#fff; }
+        .badge-status.active { background:#d97706; }
+        .badge-status.found { background:#059669; }
+        .badge-status.closed { background:#4b5563; }
+        .actions-bar { margin-top:2rem; display:flex; gap:.75rem; flex-wrap:wrap; }
+        #imageModal { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:1000; padding:2rem; }
+        #imageModal.open { display:flex; }
+        #imageModal img { max-width:100%; max-height:100%; border:6px solid #fff; box-shadow:0 0 20px rgba(0,0,0,.6); }
+        #imageModal button { position:absolute; top:1rem; right:1rem; background:#fff; border:none; padding:.4rem .7rem; font-size:1rem; cursor:pointer; border-radius:4px; }
+        @media print { nav, .actions-bar, #logoutButton, #imageModal { display:none !important; } .detail-container { box-shadow:none; padding:1rem; max-width:100%; } .detail-grid { display:block !important; } .detail-grid > div { width:100% !important; } .person-photo { width:300px !important; height:auto !important; aspect-ratio:auto; display:block; margin:1rem auto; } }
+        @media (max-width:820px){ .detail-grid { grid-template-columns:1fr; } .detail-header h1{ font-size:2.4rem; } }
+    </style>
+</head>
+<body class="report-page">
+    <div class="container-full">
+        <header class="page-header">
+            <div class="logo"><img src="/images/logo.png" alt="FindThem Logo"></div>
+            <nav>
+                <a href="dashboard.html" class="active-link">DASHBOARD</a>
+                <a href="submit-report.html">SUBMIT REPORT</a>
+                <a href="search.html">ADVANCED SEARCH</a>
+                <a href="#" id="logoutButton">LOG OUT</a>
+            </nav>
+        </header>
+        <main class="page-main">
+            <div class="detail-container" id="detailContainer">
+                <div class="detail-header">
+                    <h1>MISSING</h1>
+                    <div class="person-name" id="personName"></div>
+                </div>
+                <div id="detailContent">Loading...</div>
+            </div>
+        </main>
+    </div>
+    <div id="imageModal" aria-hidden="true">
+        <button type="button" id="closeImageModal" aria-label="Close">?</button>
+        <img id="modalFullImage" alt="Full view" />
+    </div>
+    <script src="js/report-detail.js"></script>
+</body>
+</html>

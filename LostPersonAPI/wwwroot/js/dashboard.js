@@ -20,23 +20,26 @@
     async function fetchReports(status = 'Active') {
         reportsGrid.innerHTML = '<p>Loading reports...</p>';
         try {
-            // **THE FIX - PART 1:**
-            // We add a large pageSize to get all reports for the dashboard view.
             const response = await fetch(`/api/MissingPersonReports?status=${status}&pageSize=1000`, {
                 method: 'GET',
                 headers: { 'Authorization': 'Bearer ' + token }
             });
 
             if (response.ok) {
-                // **THE FIX - PART 2:**
-                // We now expect a data object and need to get the .reports property from it.
                 const data = await response.json();
-                displayReports(data.reports, status); // Pass the inner array to the display function
+                // Handle both PascalCase (API default) and camelCase (if serializer changed) plus raw array fallback
+                const reports = data.reports || data.Reports || (Array.isArray(data) ? data : []);
+                displayReports(reports, status); 
+            } else if (response.status === 401) {
+                reportsGrid.innerHTML = `<p class="error-message">Unauthorized. Please log in again.</p>`;
+                localStorage.removeItem('jwtToken');
+                setTimeout(()=>window.location.href='/login.html',1500);
             } else {
                 reportsGrid.innerHTML = `<p class="error-message">Could not load '${status}' reports.</p>`;
             }
         } catch (error) {
             console.error(`Error fetching ${status} reports:`, error);
+            reportsGrid.innerHTML = `<p class="error-message">Network error loading reports.</p>`;
         }
     }
 
@@ -46,27 +49,34 @@
      */
     function displayReports(reports, status) {
         reportsGrid.innerHTML = '';
-        if (reports.length === 0) {
+        if (!Array.isArray(reports) || reports.length === 0) {
             reportsGrid.innerHTML = `<p>No reports with status '${status}'.</p>`;
             return;
         }
 
         reports.forEach(report => {
-            const card = document.createElement('div');
-            card.className = 'report-card';
-            const photoUrl = report.photoUrl || '/images/default-avatar.png';
+            const id = report.reportID || report.ReportID;
+            const card = document.createElement('a');
+            card.href = `report-detail.html?id=${encodeURIComponent(id)}`;
+            card.className = 'report-card-link';
 
-            card.innerHTML = `
+            const inner = document.createElement('div');
+            inner.className = 'report-card';
+            const photoUrl = report.photoUrl || report.PhotoUrl || '/images/default-avatar.png';
+            const reportStatus = report.status || report.Status || 'Unknown';
+            const lastSeenDate = report.lastSeenDate || report.LastSeenDate;
+
+            inner.innerHTML = `
                 <div class="card-photo">
-                    <img src="${photoUrl}" alt="Photo of ${report.name}" onerror="this.onerror=null;this.src='/images/default-avatar.png';">
+                    <img src="${photoUrl}" alt="Photo of ${report.name || report.Name}" onerror="this.onerror=null;this.src='/images/default-avatar.png';">
                 </div>
                 <div class="card-details">
-                    <h3>${report.name}</h3>
-                    <p><strong>Age:</strong> ${report.age}</p>
-                    <p><strong>Last Seen:</strong> ${new Date(report.lastSeenDate).toLocaleDateString()}</p>
-                    <span class="status-badge status-${report.status.toLowerCase()}">${report.status}</span>
-                </div>
-            `;
+                    <h3>${report.name || report.Name}</h3>
+                    <p><strong>Age:</strong> ${report.age || report.Age || 'N/A'}</p>
+                    <p><strong>Last Seen:</strong> ${lastSeenDate ? new Date(lastSeenDate).toLocaleDateString() : 'N/A'}</p>
+                    <span class="status-badge status-${reportStatus.toLowerCase()}">${reportStatus}</span>
+                </div>`;
+            card.appendChild(inner);
             reportsGrid.appendChild(card);
         });
     }

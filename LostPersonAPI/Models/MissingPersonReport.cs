@@ -24,5 +24,11 @@ namespace LostPersonAPI.Models
         public string? Status { get; set; }
         public DateTime ReportingDate { get; set; }
         public string? PhotoUrl { get; set; }
+        // Newly added optional physical description fields (nullable so legacy rows work)
+        public string? EyeColor { get; set; }
+        public string? HairColor { get; set; }
+        public bool HasGlasses { get; set; }
+        public string? ScarsMarks { get; set; }
+        public string? UniqueCharacteristics { get; set; }
     }
 }
