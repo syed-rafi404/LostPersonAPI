@@ -55,11 +55,11 @@ namespace LostPersonAPI.Controllers
             // Create a response object that includes both the data and pagination metadata
             var response = new
             {
-                TotalRecords = totalRecords,
-                PageSize = pageSize,
-                CurrentPage = pageNumber,
-                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
-                Reports = reports
+                totalRecords,
+                pageSize,
+                currentPage = pageNumber,
+                totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
+                reports
             };
 
             return Ok(response);
@@ -84,7 +84,13 @@ namespace LostPersonAPI.Controllers
                 Weight = reportDto.Weight,
                 SkinColor = reportDto.SkinColor,
                 Clothing = reportDto.Clothing,
-                MedicalCondition = reportDto.MedicalCondition
+                MedicalCondition = reportDto.MedicalCondition,
+                EyeColor = reportDto.EyeColor,
+                HairColor = reportDto.HairColor,
+                HasGlasses = reportDto.HasGlasses,
+                ScarsMarks = reportDto.ScarsMarks,
+                UniqueCharacteristics = reportDto.UniqueCharacteristics,
+                ReportingDate = DateTime.UtcNow
             };
 
             _context.MissingPersonReports.Add(newReport);

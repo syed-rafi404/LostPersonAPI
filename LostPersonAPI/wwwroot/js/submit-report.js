@@ -80,7 +80,12 @@
             lastSeenDate: document.getElementById('lastSeenDate').value,
             lastSeenLatitude: parseFloat(latInput.value),
             lastSeenLongitude: parseFloat(lonInput.value),
-            photoUrl: photoUrl // Add the photo URL to the report object
+            photoUrl: photoUrl, // Add the photo URL to the report object
+            eyeColor: document.getElementById('eyeColor').value,
+            hairColor: document.getElementById('hairColor').value,
+            hasGlasses: document.getElementById('hasGlasses').checked,
+            scarsMarks: document.getElementById('scarsMarks').value,
+            uniqueCharacteristics: document.getElementById('uniqueCharacteristics').value
         };
 
         // Step 3: Submit the complete report data

@@ -16,5 +16,11 @@
         public string SkinColor { get; set; }
         public string Clothing { get; set; }
         public string? MedicalCondition { get; set; }
+        // New optional fields from form
+        public string? EyeColor { get; set; }
+        public string? HairColor { get; set; }
+        public bool HasGlasses { get; set; }
+        public string? ScarsMarks { get; set; }
+        public string? UniqueCharacteristics { get; set; }
     }
 }

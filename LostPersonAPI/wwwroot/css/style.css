@@ -307,9 +307,6 @@ nav a {
     margin-top: 0.75rem;
 }
 
-
-
-
 /* --- Dashboard Filter and Badge Styles --- */
 .filter-tabs {
     margin-bottom: 1.5rem;
@@ -356,7 +353,6 @@ nav a {
     color: #B71C1C; /* Dark Red */
 }
 
-
 /* --- Advanced Search Form Styles --- */
 .search-form {
     background-color: #ffffff;
@@ -378,7 +374,28 @@ nav a {
     margin-bottom: 1rem;
     font-size: 1.1rem;
 }
-/* Add this to the end of your style.css file */
+
+/* Add this to your existing CSS */
+.checkbox-group {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    /* Align with other inputs in the grid */
+    padding-top: 1.5rem; /* Adjust as needed */
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
 .btn-secondary {
     background-color: #f0f0f0;
     color: #333;
