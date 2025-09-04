@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moderation - FindThem</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .moderation-table { width:100%; border-collapse:collapse; margin-top:1.5rem; font-size:.95rem; }
+    .moderation-table th, .moderation-table td { padding:.75rem .9rem; border-bottom:1px solid #ddd; text-align:left; }
+    .moderation-table th { background:#f5f5f5; font-weight:600; }
+    .status-pill { display:inline-block; padding:.25rem .6rem; border-radius:14px; font-size:.7rem; font-weight:600; background:#999; color:#fff; }
+    .status-pill.pending { background:#d97706; }
+    .status-pill.active { background:#15803d; }
+    .status-pill.declined { background:#b91c1c; }
+    .action-btn { border:none; cursor:pointer; padding:.45rem .8rem; border-radius:4px; font-size:.75rem; font-weight:600; }
+    .approve-btn { background:#15803d; color:#fff; }
+    .decline-btn { background:#b91c1c; color:#fff; }
+    .approve-btn[disabled], .decline-btn[disabled] { opacity:.4; cursor:default; }
+    .inline-photo { width:60px; height:60px; object-fit:cover; border:2px solid #eee; border-radius:4px; }
+    .toolbar { display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
+    #modMessage { margin-top:1rem; font-size:.85rem; }
+    .promotion-box { border:1px solid #ddd; padding:1rem; border-radius:6px; background:#fafafa; margin-top:1.5rem; max-width:500px; }
+    .promotion-box h2 { font-size:1.1rem; margin:0 0 .75rem; }
+    .promotion-box form { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .promotion-box input { flex:1 1 220px; padding:.6rem .75rem; border:1px solid #ccc; border-radius:4px; }
+    .promotion-box button { padding:.6rem 1rem; border:none; background:#4A148C; color:#fff; font-weight:600; border-radius:4px; cursor:pointer; }
+    .promotion-box button:hover { background:#6A1B9A; }
+  </style>
+</head>
+<body class="report-page">
+  <div class="container-full">
+    <header class="page-header">
+      <div class="logo"><img src="/images/logo.png" alt="FindThem Logo"></div>
+      <nav>
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="submit-report.html">SUBMIT REPORT</a>
+        <a href="search.html">ADVANCED SEARCH</a>
+        <a href="moderation.html" class="active-link">MODERATION</a>
+        <a href="#" id="logoutButton">LOG OUT</a>
+      </nav>
+    </header>
+    <main class="page-main">
+      <h1>Report Moderation</h1>
+      <p>Approve or decline newly submitted reports. Only approved reports become visible to general users.</p>
+      <div class="toolbar">
+        <button id="refreshBtn" class="btn-secondary">Refresh</button>
+        <span id="modMessage"></span>
+      </div>
+      <table class="moderation-table" id="moderationTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="moderationBody"></tbody>
+      </table>
+
+      <div class="promotion-box" id="promotionBox">
+        <h2>Promote User to Admin</h2>
+        <form id="promoteForm">
+          <input id="promoteUsername" type="text" placeholder="Username" required />
+          <button type="submit">Promote</button>
+        </form>
+        <div id="promoteMessage" style="margin-top:.5rem;font-size:.85rem"></div>
+      </div>
+    </main>
+  </div>
+  <script src="js/nav-role.js"></script>
+  <script src="js/moderation.js"></script>
+  <script src="js/promote.js"></script>
+</body>
+</html>

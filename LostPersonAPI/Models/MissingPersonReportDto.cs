@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public int Age { get; set; }
         public string Gender { get; set; }
-        public string Status { get; set; } = "Active"; // Default status
+        public string Status { get; set; } = "Pending"; // Default status now Pending
         public DateTime LastSeenDate { get; set; }
         public double LastSeenLatitude { get; set; }
         public double LastSeenLongitude { get; set; }

@@ -11,6 +11,11 @@
         return;
     }
 
+    // Inject role-based nav adjustments
+    const script = document.createElement('script');
+    script.src = 'js/nav-role.js';
+    document.head.appendChild(script);
+
     // --- Core Functions ---
 
     /**
@@ -50,7 +55,7 @@
     function displayReports(reports, status) {
         reportsGrid.innerHTML = '';
         if (!Array.isArray(reports) || reports.length === 0) {
-            reportsGrid.innerHTML = `<p>No reports with status '${status}'.</p>`;
+            reportsGrid.innerHTML = `<p>No approved reports with status '${status}'.</p>`;
             return;
         }
 
@@ -93,6 +98,7 @@
     logoutButton.addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem('isAdmin');
         window.location.href = '/login.html';
     });
 

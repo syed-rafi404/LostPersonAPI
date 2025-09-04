@@ -65,26 +65,36 @@
         const { reports, totalRecords, totalPages, currentPage } = data;
         resultsCount.textContent = `${totalRecords} report(s) found.`;
 
-        if (reports.length === 0) {
+        if (!reports || reports.length === 0) {
             reportsGrid.innerHTML = `<p>No reports match your search criteria.</p>`;
+            return;
         }
 
         reports.forEach(report => {
+            const id = report.reportID || report.ReportID;
+            const link = document.createElement('a');
+            link.href = `report-detail.html?id=${encodeURIComponent(id)}`;
+            link.className = 'report-card-link';
+
             const card = document.createElement('div');
             card.className = 'report-card';
-            const photoUrl = report.photoUrl || '/images/default-avatar.png';
+            const photoUrl = report.photoUrl || report.PhotoUrl || '/images/default-avatar.png';
+            const lastSeenDate = report.lastSeenDate || report.LastSeenDate;
+            const status = report.status || report.Status || 'Unknown';
+
             card.innerHTML = `
                 <div class="card-photo">
-                    <img src="${photoUrl}" alt="Photo of ${report.name}" onerror="this.onerror=null;this.src='/images/default-avatar.png';">
+                    <img src="${photoUrl}" alt="Photo of ${report.name || report.Name}" onerror="this.onerror=null;this.src='/images/default-avatar.png';">
                 </div>
                 <div class="card-details">
-                    <h3>${report.name}</h3>
-                    <p><strong>Age:</strong> ${report.age} | <strong>Gender:</strong> ${report.gender}</p>
-                    <p><strong>Last Seen:</strong> ${new Date(report.lastSeenDate).toLocaleDateString()}</p>
-                    <span class="status-badge status-${report.status.toLowerCase()}">${report.status}</span>
+                    <h3>${report.name || report.Name}</h3>
+                    <p><strong>Age:</strong> ${report.age || report.Age || 'N/A'} | <strong>Gender:</strong> ${report.gender || report.Gender || 'N/A'}</p>
+                    <p><strong>Last Seen:</strong> ${lastSeenDate ? new Date(lastSeenDate).toLocaleDateString() : 'N/A'}</p>
+                    <span class="status-badge status-${status.toLowerCase()}">${status}</span>
                 </div>
             `;
-            reportsGrid.appendChild(card);
+            link.appendChild(card);
+            reportsGrid.appendChild(link);
         });
 
         // Update pagination controls

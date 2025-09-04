@@ -89,7 +89,7 @@
         };
 
         // Step 3: Submit the complete report data
-        displayMessage('Submitting report...', 'info');
+        displayMessage('Submitting report for moderation...', 'info');
         try {
             const response = await fetch('/api/MissingPersonReports', {
                 method: 'POST',
@@ -101,7 +101,7 @@
             });
 
             if (response.ok) {
-                displayMessage('Report submitted successfully!', 'success');
+                displayMessage('Report submitted and waiting for approval.', 'success');
                 reportForm.reset();
                 if (marker) {
                     map.removeLayer(marker);

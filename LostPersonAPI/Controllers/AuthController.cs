@@ -1,10 +1,11 @@
-﻿using LostPersonAPI.Models.Auth;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MySqlConnector;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using LostPersonAPI.Models.Auth;
+using System.Security.Cryptography;
 
 namespace LostPersonAPI.Controllers
 {
@@ -12,76 +13,140 @@ namespace LostPersonAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
-
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        private readonly string _cs;
+        public AuthController(IConfiguration configuration)
         {
-            _userManager = userManager;
             _configuration = configuration;
+            _cs = configuration.GetConnectionString("DefaultConnection")!;
         }
 
-        // POST: /api/auth/register
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User already exists!" });
-
-            IdentityUser user = new()
+            await using var conn = new MySqlConnection(_cs);
+            await conn.OpenAsync();
+            await using (var check = new MySqlCommand("SELECT COUNT(*) FROM Users WHERE Username=@u", conn))
             {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });
-
-            return Ok(new { Status = "Success", Message = "User created successfully!" });
+                check.Parameters.AddWithValue("@u", model.Username);
+                if (Convert.ToInt32(await check.ExecuteScalarAsync()) > 0)
+                    return Conflict(new { message = "User already exists" });
+            }
+            var hash = SimplePasswordHasher.Hash(model.Password);
+            int userId;
+            await using (var ins = new MySqlCommand("INSERT INTO Users(Username,Email,PasswordHash) VALUES(@u,@e,@p); SELECT LAST_INSERT_ID();", conn))
+            {
+                ins.Parameters.AddWithValue("@u", model.Username.Trim());
+                ins.Parameters.AddWithValue("@e", model.Email ?? (object)DBNull.Value);
+                ins.Parameters.AddWithValue("@p", hash);
+                userId = Convert.ToInt32(await ins.ExecuteScalarAsync());
+            }
+            await using (var roleCmd = new MySqlCommand(@"INSERT IGNORE INTO UserRoles(UserId, RoleId)
+SELECT @uid, r.Id FROM Roles r WHERE r.Name='User'", conn))
+            {
+                roleCmd.Parameters.AddWithValue("@uid", userId);
+                await roleCmd.ExecuteNonQueryAsync();
+            }
+            return Ok(new { message = "User created" });
         }
 
-        // POST: /api/auth/login
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            var inputUsername = (model.Username ?? string.Empty).Trim();
+            var inputPassword = model.Password ?? string.Empty; // keep original for hashing
+
+            await using var conn = new MySqlConnection(_cs);
+            await conn.OpenAsync();
+            int userId = 0; string? storedHash = null; string? usernameExact = null;
+
+            // Robust user lookup handling accidental spaces / case differences
+            const string userSql = @"SELECT Id,PasswordHash,Username FROM Users 
+WHERE Username=@u OR TRIM(Username)=@u OR LOWER(Username)=LOWER(@u) 
+ORDER BY (Username=@u) DESC LIMIT 1";
+            await using (var cmd = new MySqlCommand(userSql, conn))
             {
-                var authClaims = new List<Claim>
+                cmd.Parameters.AddWithValue("@u", inputUsername);
+                await using var r = await cmd.ExecuteReaderAsync();
+                if (await r.ReadAsync())
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-                var jwtToken = GetToken(authClaims);
-
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                    expiration = jwtToken.ValidTo
-                });
+                    userId = r.GetInt32("Id");
+                    storedHash = r.GetString("PasswordHash");
+                    usernameExact = r.GetString("Username");
+                }
             }
-            return Unauthorized();
-        }
+            if (storedHash == null) return Unauthorized();
 
-        private JwtSecurityToken GetToken(List<Claim> authClaims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            // Primary peppered hash
+            var peppered = SimplePasswordHasher.Hash(inputPassword);
+            bool ok = string.Equals(peppered, storedHash, StringComparison.OrdinalIgnoreCase);
 
+            if(!ok)
+            {
+                // Legacy hash (no pepper) support + auto-migrate
+                string legacyHash;
+                using(var sha = SHA256.Create())
+                {
+                    legacyHash = Convert.ToHexString(sha.ComputeHash(Encoding.UTF8.GetBytes(inputPassword)));
+                }
+                if(string.Equals(legacyHash, storedHash, StringComparison.OrdinalIgnoreCase))
+                {
+                    // migrate to peppered hash
+                    await using var up = new MySqlCommand("UPDATE Users SET PasswordHash=@h, Username=TRIM(Username) WHERE Id=@id", conn);
+                    up.Parameters.AddWithValue("@h", peppered);
+                    up.Parameters.AddWithValue("@id", userId);
+                    await up.ExecuteNonQueryAsync();
+                    ok = true;
+                }
+            }
+            if(!ok) return Unauthorized();
+
+            var roles = new List<string>();
+            await using (var roleCmd = new MySqlCommand(@"SELECT r.Name FROM Roles r JOIN UserRoles ur ON ur.RoleId=r.Id WHERE ur.UserId=@id", conn))
+            {
+                roleCmd.Parameters.AddWithValue("@id", userId);
+                await using var r = await roleCmd.ExecuteReaderAsync();
+                while (await r.ReadAsync()) roles.Add(r.GetString(0));
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Name, usernameExact ?? inputUsername)
+            };
+            foreach (var role in roles) claims.Add(new Claim(ClaimTypes.Role, role));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
+                expires: DateTime.UtcNow.AddHours(3),
+                claims: claims,
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
 
-            return token;
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo,
+                roles
+            });
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> Me()
+        {
+            if (!User.Identity?.IsAuthenticated ?? true) return Unauthorized();
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await using var conn = new MySqlConnection(_cs);
+            await conn.OpenAsync();
+            var roles = new List<string>();
+            await using (var roleCmd = new MySqlCommand(@"SELECT r.Name FROM Roles r JOIN UserRoles ur ON ur.RoleId=r.Id WHERE ur.UserId=@id", conn))
+            {
+                roleCmd.Parameters.AddWithValue("@id", userId);
+                await using var r = await roleCmd.ExecuteReaderAsync();
+                while (await r.ReadAsync()) roles.Add(r.GetString(0));
+            }
+            return Ok(new { username = User.Identity!.Name, roles });
         }
     }
 }
