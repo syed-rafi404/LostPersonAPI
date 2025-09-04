@@ -5,10 +5,9 @@
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-
         messageDiv.style.display = 'none';
         messageDiv.textContent = '';
-        messageDiv.className = 'message-display'; 
+        messageDiv.className = 'message-display';
 
         const username = document.getElementById('username').value;
         const email = document.getElementById('email').value;
@@ -40,7 +39,6 @@
                 displayMessage(data.message || 'Registration failed.', 'error');
             }
         } catch (error) {
-            console.error('Error during sign up:', error);
             displayMessage('An unexpected error occurred.', 'error');
         }
     });

@@ -1,5 +1,4 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    // --- Element References ---
     const searchForm = document.getElementById('searchForm');
     const reportsGrid = document.getElementById('reportsGrid');
     const resultsCount = document.getElementById('resultsCount');
@@ -9,18 +8,15 @@
     const nextButton = document.getElementById('nextButton');
     const pageInfo = document.getElementById('pageInfo');
 
-    // --- State Management ---
     let currentPage = 1;
-    const pageSize = 8; // Show 8 reports per page
+    const pageSize = 8;
 
-    // --- Authentication ---
     const token = localStorage.getItem('jwtToken');
     if (!token) {
         window.location.href = '/login.html';
         return;
     }
 
-    // --- Core Functions ---
     async function performSearch(page = 1) {
         currentPage = page;
         const name = document.getElementById('searchName').value;
@@ -56,7 +52,6 @@
                 reportsGrid.innerHTML = `<p class="error-message">Search failed. Please try again.</p>`;
             }
         } catch (error) {
-            console.error('Search error:', error);
         }
     }
 
@@ -97,16 +92,14 @@
             reportsGrid.appendChild(link);
         });
 
-        // Update pagination controls
         pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
         prevButton.disabled = currentPage <= 1;
         nextButton.disabled = currentPage >= totalPages;
     }
 
-    // --- Event Listeners ---
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        performSearch(1); // Always go to page 1 for a new search
+        performSearch(1);
     });
 
     clearButton.addEventListener('click', () => {
@@ -130,6 +123,5 @@
         window.location.href = '/login.html';
     });
 
-    // --- Initial Page Load ---
     performSearch(1);
 });

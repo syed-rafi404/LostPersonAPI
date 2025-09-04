@@ -1,27 +1,18 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    // --- Element References ---
     const reportsGrid = document.getElementById('reportsGrid');
     const logoutButton = document.getElementById('logoutButton');
     const filterTabs = document.querySelector('.filter-tabs');
 
-    // --- Authentication ---
     const token = localStorage.getItem('jwtToken');
     if (!token) {
         window.location.href = '/login.html';
         return;
     }
 
-    // Inject role-based nav adjustments
     const script = document.createElement('script');
     script.src = 'js/nav-role.js';
     document.head.appendChild(script);
 
-    // --- Core Functions ---
-
-    /**
-     * Fetches reports from the API based on the selected status.
-     * @param {string} status - The status to filter by (e.g., 'Active').
-     */
     async function fetchReports(status = 'Active') {
         reportsGrid.innerHTML = '<p>Loading reports...</p>';
         try {
@@ -32,9 +23,8 @@
 
             if (response.ok) {
                 const data = await response.json();
-                // Handle both PascalCase (API default) and camelCase (if serializer changed) plus raw array fallback
                 const reports = data.reports || data.Reports || (Array.isArray(data) ? data : []);
-                displayReports(reports, status); 
+                displayReports(reports, status);
             } else if (response.status === 401) {
                 reportsGrid.innerHTML = `<p class="error-message">Unauthorized. Please log in again.</p>`;
                 localStorage.removeItem('jwtToken');
@@ -43,15 +33,10 @@
                 reportsGrid.innerHTML = `<p class="error-message">Could not load '${status}' reports.</p>`;
             }
         } catch (error) {
-            console.error(`Error fetching ${status} reports:`, error);
             reportsGrid.innerHTML = `<p class="error-message">Network error loading reports.</p>`;
         }
     }
 
-    /**
-     * Renders the report cards into the grid.
-     * @param {Array} reports - The array of report objects to display.
-     */
     function displayReports(reports, status) {
         reportsGrid.innerHTML = '';
         if (!Array.isArray(reports) || reports.length === 0) {
@@ -86,7 +71,6 @@
         });
     }
 
-    // --- Event Listeners ---
     filterTabs.addEventListener('click', (e) => {
         if (e.target.classList.contains('tab-button')) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -102,6 +86,5 @@
         window.location.href = '/login.html';
     });
 
-    // --- Initial Page Load ---
     fetchReports('Active');
 });

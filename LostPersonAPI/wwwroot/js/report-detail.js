@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const hairColor = r.hairColor || r.HairColor || '—';
             const hasGlasses = (r.hasGlasses ?? r.HasGlasses) ? 'Yes' : 'No';
 
-            // Inject layout: two existing columns + new timeline column container
             detailContent.innerHTML = `
               <div class="detail-grid">
                 <div>
@@ -98,10 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('openImageBtn').addEventListener('click', ()=> openModal(photoUrl, name));
             document.getElementById('inlinePhoto').addEventListener('click', ()=> openModal(photoUrl, name));
 
-            // Initialize timeline after layout ready
             initTimeline(parseInt(id,10), token);
         } catch(err){
-            console.error(err);
             detailContent.textContent = 'An unexpected error occurred.';
         }
     }
@@ -122,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Timeline logic (isolated function so we can call after detail loads)
 function initTimeline(reportId, token){
   const itemsEl = document.getElementById('timelineItems');
   const form = document.getElementById('timelineForm');
@@ -153,7 +149,7 @@ function initTimeline(reportId, token){
       if(arr.length>0) itemsEl.scrollTop = itemsEl.scrollHeight;
       if(initial && arr.length===0){ itemsEl.innerHTML='<div style="font-size:.7rem;color:#777;padding:.25rem;">No updates yet. Be the first to add information.</div>'; }
       statusEl.textContent='';
-    } catch(err){ console.error(err); statusEl.textContent='Timeline error'; }
+    } catch(err){ statusEl.textContent='Timeline error'; }
     loading=false;
   }
 
@@ -167,12 +163,10 @@ function initTimeline(reportId, token){
       const resp = await fetch('/api/Timeline', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({ reportId, message: msg }) });
       if(resp.ok){ textarea.value=''; await load(); statusEl.textContent='Posted'; setTimeout(()=>statusEl.textContent='',1200); }
       else { const t = await resp.text(); statusEl.textContent='Post failed '+t; }
-    } catch(err){ console.error(err); statusEl.textContent='Network error'; }
+    } catch(err){ statusEl.textContent='Network error'; }
   });
 
-  function startPolling(){
-    pollHandle = setInterval(()=> load(false), 5000);
-  }
+  function startPolling(){ pollHandle = setInterval(()=> load(false), 5000); }
   function stopPolling(){ if(pollHandle) clearInterval(pollHandle); }
   document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stopPolling(); else startPolling(); });
 

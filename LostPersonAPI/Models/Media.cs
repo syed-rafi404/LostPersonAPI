@@ -5,7 +5,7 @@ namespace LostPersonAPI.Models
     public class Media
     {
         public int MediaID { get; set; }
-        public int ReportID { get; set; } // Foreign Key
+        public int ReportID { get; set; }
         public string FilePath { get; set; }
         public string FileType { get; set; }
         public string Status { get; set; }

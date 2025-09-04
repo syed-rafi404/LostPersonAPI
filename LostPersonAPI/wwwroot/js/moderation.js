@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(reports.length===0){ tbody.innerHTML = '<tr><td colspan="9">No reports.</td></tr>'; return; }
       reports.forEach(r => addRow(r));
     } catch(err){
-      console.error(err); tbody.innerHTML = '<tr><td colspan="9">Error.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9">Error.</td></tr>';
     }
   }
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resp = await fetch(`/api/MissingPersonReports/${id}/${action}`, { method:'POST', headers:{'Authorization':'Bearer '+token }});
       }
 
-      const text = await resp.text(); // read body for diagnostics (may be JSON or plain)
+      const text = await resp.text();
       let payload;
       try { payload = text ? JSON.parse(text) : null; } catch { payload = text; }
 
@@ -70,10 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadReports();
       } else {
         msg.textContent = `Action '${action}' failed (status ${resp.status}) ${payload && payload.detail ? '- '+payload.detail : ''}`;
-        console.error('Moderation action error', {status: resp.status, body: payload});
         btn.disabled = false;
       }
-    } catch(err){ console.error(err); msg.textContent='Network error.'; btn.disabled=false; }
+    } catch(err){ msg.textContent='Network error.'; btn.disabled=false; }
   }
 
   refreshBtn.addEventListener('click', loadReports);

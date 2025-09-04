@@ -7,35 +7,26 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="report-page">
-    <!-- Use the same background style -->
     <div class="container-full">
         <header class="page-header">
             <div class="logo">
                 <img src="/images/logo.png" alt="FindThem Logo">
             </div>
-            <!-- In dashboard.html -->
-            <!-- In dashboard.html -->
             <nav>
                 <a href="dashboard.html" class="active-link">DASHBOARD</a>
                 <a href="submit-report.html">SUBMIT REPORT</a>
                 <a href="search.html">ADVANCED SEARCH</a>
                 <a href="#" id="logoutButton">LOG OUT</a>
             </nav>
-
-
         </header>
         <main class="page-main">
             <h1>Missing Person Reports</h1>
-            <!-- Add this block for the new filter tabs -->
             <div class="filter-tabs">
                 <button class="tab-button active" data-status="Active">Active Cases</button>
                 <button class="tab-button" data-status="Found">Found Cases</button>
                 <button class="tab-button" data-status="Closed">Closed Cases</button>
             </div>
-
-            <div id="reportsGrid" class="reports-grid-container">
-                <!-- Report cards will be inserted here by JavaScript -->
-            </div>
+            <div id="reportsGrid" class="reports-grid-container"></div>
         </main>
     </div>
     <script src="js/nav-role.js"></script>

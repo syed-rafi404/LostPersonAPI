@@ -79,7 +79,6 @@ namespace LostPersonAPI.Controllers
             return count > 0;
         }
 
-        // GET: api/MissingPersonReports  (Raw SQL with optional filters + pagination)
         [HttpGet]
         public async Task<IActionResult> GetReports(
             [FromQuery] string? name,
@@ -128,7 +127,6 @@ namespace LostPersonAPI.Controllers
             return Ok(new { totalRecords = total, pageSize, currentPage = pageNumber, totalPages = (int)Math.Ceiling(total / (double)pageSize), reports = list });
         }
 
-        // GET single
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReportById(int id)
         {
@@ -147,7 +145,6 @@ namespace LostPersonAPI.Controllers
             return Ok(report);
         }
 
-        // INSERT only columns that definitely exist in current schema to avoid unknown column errors
         [HttpPost]
         public async Task<IActionResult> PostMissingPersonReport(MissingPersonReportDto dto)
         {
@@ -156,7 +153,6 @@ namespace LostPersonAPI.Controllers
             try
             {
                 await using var conn = await OpenAsync();
-                // Detect optional columns
                 bool photoColumn = await ColumnExistsAsync(conn, "MissingPersonReports", "PhotoUrl");
                 bool reportedByColumn = await ColumnExistsAsync(conn, "MissingPersonReports", "ReportedBy");
                 bool eyeCol = await ColumnExistsAsync(conn, "MissingPersonReports", "EyeColor");
@@ -205,7 +201,6 @@ namespace LostPersonAPI.Controllers
                 await using (var idCmd = new MySqlCommand("SELECT LAST_INSERT_ID();", conn))
                 { newId = Convert.ToInt64(await idCmd.ExecuteScalarAsync()); }
 
-                // Notify admins of new pending case
                 var adminIds = await GetAdminUserIds(conn);
                 foreach(var aid in adminIds){ if(aid!=CurrentUserId) await AddNotification(conn, aid, "NewReport", $"New report submitted: {dto.Name}", (int)newId); }
 
@@ -232,7 +227,6 @@ namespace LostPersonAPI.Controllers
             }
         }
 
-        // Approve
         [HttpPost("{id}/approve")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> ApproveReport(int id)
@@ -248,7 +242,6 @@ namespace LostPersonAPI.Controllers
             return Ok(new { message = "Approved", id });
         }
 
-        // Mark as Found
         [HttpPost("{id}/found")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> MarkFound(int id)
@@ -263,7 +256,6 @@ namespace LostPersonAPI.Controllers
             return Ok(new { message = "Marked Found", id });
         }
 
-        // Mark as Closed
         [HttpPost("{id}/close")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> MarkClosed(int id)
@@ -278,7 +270,6 @@ namespace LostPersonAPI.Controllers
             return Ok(new { message = "Marked Closed", id });
         }
 
-        // Decline (pending only)
         [HttpPost("{id}/decline")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> DeclineReport(int id)
@@ -293,7 +284,6 @@ namespace LostPersonAPI.Controllers
             return Ok(new { message = "Deleted" });
         }
 
-        // Full delete any status (also remove dependents)
         [HttpDelete("{id}")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> DeleteReport(int id)

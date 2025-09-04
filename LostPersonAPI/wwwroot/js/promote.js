@@ -1,4 +1,3 @@
-// Admin-only user promotion script
 (function(){
   const token = localStorage.getItem('jwtToken');
   const isAdmin = localStorage.getItem('isAdmin') === 'true';
@@ -18,6 +17,6 @@
       else if(resp.status===404){ msg.textContent='User not found.'; }
       else if(resp.status===403){ msg.textContent='Not authorized.'; }
       else { msg.textContent='Promotion failed.'; }
-    } catch(err){ console.error(err); msg.textContent='Network error.'; }
+    } catch(err){ msg.textContent='Network error.'; }
   });
 })();

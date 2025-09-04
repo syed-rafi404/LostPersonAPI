@@ -7,6 +7,6 @@
         public string? MiddleName { get; set; }
         public string? LastName { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? NID { get; set; } // National ID
+        public string? NID { get; set; }
     }
 }

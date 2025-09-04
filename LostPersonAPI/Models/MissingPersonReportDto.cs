@@ -1,12 +1,11 @@
 ﻿namespace LostPersonAPI.Models
 {
-    // This object represents the data coming in from the frontend form
     public class MissingPersonReportDto
     {
         public string Name { get; set; }
         public int Age { get; set; }
         public string Gender { get; set; }
-        public string Status { get; set; } = "Pending"; // Default status now Pending
+        public string Status { get; set; } = "Pending";
         public DateTime LastSeenDate { get; set; }
         public double LastSeenLatitude { get; set; }
         public double LastSeenLongitude { get; set; }
@@ -16,7 +15,6 @@
         public string SkinColor { get; set; }
         public string Clothing { get; set; }
         public string? MedicalCondition { get; set; }
-        // New optional fields from form
         public string? EyeColor { get; set; }
         public string? HairColor { get; set; }
         public bool HasGlasses { get; set; }

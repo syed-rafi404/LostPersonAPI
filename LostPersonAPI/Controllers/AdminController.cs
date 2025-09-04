@@ -15,7 +15,6 @@ namespace LostPersonAPI.Controllers
             _cs = configuration.GetConnectionString("DefaultConnection")!;
         }
 
-        // POST api/admin/promote/{username}
         [HttpPost("promote/{username}")]
         public async Task<IActionResult> Promote(string username)
         {
@@ -29,7 +28,6 @@ namespace LostPersonAPI.Controllers
                 if (o == null) return NotFound();
                 userId = Convert.ToInt32(o);
             }
-            // Ensure Admin role id
             int roleId = 0;
             await using (var getRole = new MySqlCommand("SELECT Id FROM Roles WHERE Name='Admin'", conn))
             {

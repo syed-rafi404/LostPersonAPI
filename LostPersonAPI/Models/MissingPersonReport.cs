@@ -4,11 +4,10 @@ namespace LostPersonAPI.Models
 {
     public class MissingPersonReport
     {
-
         [Key]
         public int ReportID { get; set; }
-        public int ReportedBy { get; set; } // Foreign Key
-        public int? ApprovedBy { get; set; } // Foreign Key, can be null
+        public int ReportedBy { get; set; }
+        public int? ApprovedBy { get; set; }
         public DateTime? ApprovedAt { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
@@ -24,7 +23,6 @@ namespace LostPersonAPI.Models
         public string? Status { get; set; }
         public DateTime ReportingDate { get; set; }
         public string? PhotoUrl { get; set; }
-        // Newly added optional physical description fields (nullable so legacy rows work)
         public string? EyeColor { get; set; }
         public string? HairColor { get; set; }
         public bool HasGlasses { get; set; }

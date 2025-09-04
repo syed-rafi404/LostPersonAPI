@@ -34,7 +34,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Seed minimal auth tables (lowercase names to match existing DB) + default admin
 async Task SeedAuthAsync()
 {
     await using var conn = new MySqlConnection(connectionString);
@@ -90,7 +89,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     { check.Parameters.AddWithValue("@u", adminUser); exists = Convert.ToInt32(await check.ExecuteScalarAsync()); }
 
     var peppered = SimplePasswordHasher.Hash(adminPass);
-    // legacy hash without pepper
     string legacy;
     using(var sha = SHA256.Create()) legacy = Convert.ToHexString(sha.ComputeHash(Encoding.UTF8.GetBytes(adminPass)));
 
@@ -101,14 +99,13 @@ CREATE TABLE IF NOT EXISTS notifications (
         {
             ins.Parameters.AddWithValue("@u", adminUser);
             ins.Parameters.AddWithValue("@e", adminEmail);
-            ins.Parameters.AddWithValue("@p", peppered); // always store peppered
+            ins.Parameters.AddWithValue("@p", peppered);
             uid = Convert.ToInt32(await ins.ExecuteScalarAsync());
         }
         await Exec("INSERT IGNORE INTO userroles(UserId,RoleId) SELECT @id, Id FROM roles WHERE Name='Admin'", c => c.Parameters.AddWithValue("@id", uid));
     }
     else
     {
-        // Upgrade legacy hash if needed
         await using (var sel = new MySqlCommand("SELECT Id, PasswordHash FROM users WHERE Username=@u", conn))
         {
             sel.Parameters.AddWithValue("@u", adminUser);
@@ -146,7 +143,7 @@ app.Run();
 
 static class SimplePasswordHasher
 {
-    private const string Pepper = "__DEMO_STATIC_PEPPER__"; // demo only
+    private const string Pepper = "__DEMO_STATIC_PEPPER__";
     public static string Hash(string password)
     {
         password = password?.TrimEnd('\r','\n') ?? string.Empty;

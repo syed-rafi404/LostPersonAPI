@@ -3,7 +3,6 @@
   if(!token) return;
   const nav = document.querySelector('nav');
   if(!nav) return;
-  // Create bell container
   let bellWrap = document.getElementById('notifBellWrap');
   if(!bellWrap){
     bellWrap = document.createElement('div');
@@ -44,7 +43,7 @@
       unreadIds = new Set(data.filter(n=>!n.isRead).map(n=>n.id));
       if(unreadIds.size>0){ badge.textContent = unreadIds.size > 99 ? '99+' : unreadIds.size; badge.hidden=false; } else { badge.hidden=true; }
       if(open) renderList();
-    } catch(e){ /* ignore */ }
+    } catch(e){}
   }
 
   function renderList(){

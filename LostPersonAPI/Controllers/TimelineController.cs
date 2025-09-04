@@ -23,13 +23,11 @@ namespace LostPersonAPI.Controllers
             return c;
         }
 
-        // GET api/timeline/{reportId}?afterId=0&limit=100
         [HttpGet("{reportId}")]
         public async Task<IActionResult> GetTimeline(int reportId, [FromQuery] int afterId = 0, [FromQuery] int limit = 100)
         {
             if (limit < 1 || limit > 500) limit = 100;
             await using var conn = await OpenAsync();
-            // Ensure report exists and user can view
             string status = "";
             await using (var chk = new MySqlCommand("SELECT Status FROM MissingPersonReports WHERE ReportID=@id", conn))
             {
@@ -68,7 +66,6 @@ namespace LostPersonAPI.Controllers
 
         public class TimelinePostDto { public int ReportId { get; set; } public string Message { get; set; } = string.Empty; }
 
-        // POST api/timeline
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TimelinePostDto dto)
         {
@@ -76,7 +73,6 @@ namespace LostPersonAPI.Controllers
             var trimmed = dto.Message.Trim();
             if (trimmed.Length > 2000) trimmed = trimmed.Substring(0, 2000);
             await using var conn = await OpenAsync();
-            // Validate report & visibility
             bool isAdmin = User.IsInRole("Admin");
             string? status = null;
             await using (var chk = new MySqlCommand("SELECT Status FROM MissingPersonReports WHERE ReportID=@id", conn))
@@ -89,7 +85,6 @@ namespace LostPersonAPI.Controllers
                     return Forbid();
             }
 
-            // Ensure table exists (first use convenience)
             const string createSql = @"CREATE TABLE IF NOT EXISTS ReportTimeline (
   Id INT AUTO_INCREMENT PRIMARY KEY,
   ReportID INT NOT NULL,

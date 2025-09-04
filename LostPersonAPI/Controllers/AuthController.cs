@@ -54,13 +54,12 @@ SELECT @uid, r.Id FROM Roles r WHERE r.Name='User'", conn))
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var inputUsername = (model.Username ?? string.Empty).Trim();
-            var inputPassword = model.Password ?? string.Empty; // keep original for hashing
+            var inputPassword = model.Password ?? string.Empty;
 
             await using var conn = new MySqlConnection(_cs);
             await conn.OpenAsync();
             int userId = 0; string? storedHash = null; string? usernameExact = null;
 
-            // Robust user lookup handling accidental spaces / case differences
             const string userSql = @"SELECT Id,PasswordHash,Username FROM Users 
 WHERE Username=@u OR TRIM(Username)=@u OR LOWER(Username)=LOWER(@u) 
 ORDER BY (Username=@u) DESC LIMIT 1";
@@ -77,13 +76,11 @@ ORDER BY (Username=@u) DESC LIMIT 1";
             }
             if (storedHash == null) return Unauthorized();
 
-            // Primary peppered hash
             var peppered = SimplePasswordHasher.Hash(inputPassword);
             bool ok = string.Equals(peppered, storedHash, StringComparison.OrdinalIgnoreCase);
 
             if(!ok)
             {
-                // Legacy hash (no pepper) support + auto-migrate
                 string legacyHash;
                 using(var sha = SHA256.Create())
                 {
@@ -91,7 +88,6 @@ ORDER BY (Username=@u) DESC LIMIT 1";
                 }
                 if(string.Equals(legacyHash, storedHash, StringComparison.OrdinalIgnoreCase))
                 {
-                    // migrate to peppered hash
                     await using var up = new MySqlCommand("UPDATE Users SET PasswordHash=@h, Username=TRIM(Username) WHERE Id=@id", conn);
                     up.Parameters.AddWithValue("@h", peppered);
                     up.Parameters.AddWithValue("@id", userId);

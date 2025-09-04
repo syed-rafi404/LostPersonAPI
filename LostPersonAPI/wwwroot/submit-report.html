@@ -16,30 +16,20 @@
             <div class="logo">
                 <img src="/images/logo.png" alt="FindThem Logo">
             </div>
-            <!-- In submit-report.html -->
-            <!-- In submit-report.html -->
-            <!-- In submit-report.html -->
             <nav>
                 <a href="dashboard.html">DASHBOARD</a>
                 <a href="submit-report.html" class="active-link">SUBMIT REPORT</a>
                 <a href="search.html">ADVANCED SEARCH</a>
                 <a href="#" id="logoutButton">LOG OUT</a>
             </nav>
-
-
-
-
         </header>
         <main class="page-main">
             <h1>Report a Missing Person</h1>
             <form id="reportForm">
-                <!-- Main two-column grid for the entire form -->
                 <div class="form-main-grid">
-                    <!-- Left Column: Personal and Physical Details -->
                     <div class="form-section-column">
                         <h2>Details</h2>
 
-                        <!-- Keep this single photo input -->
                         <div class="input-group">
                             <label for="photo">Photo of Missing Person</label>
                             <input type="file" id="photo" accept="image/png, image/jpeg" class="form-control-file">
@@ -70,7 +60,6 @@
                                 <label for="skinColor">Skin Color</label>
                                 <input type="text" id="skinColor" required>
                             </div>
-                            <!-- New fields added here -->
                             <div class="input-group">
                                 <label for="eyeColor">Eye Color</label>
                                 <input type="text" id="eyeColor">
@@ -101,7 +90,6 @@
                             <textarea id="medicalCondition" rows="3"></textarea>
                         </div>
                     </div>
-                    <!-- Right Column: Location Details and Map -->
                     <div class="form-section-column">
                         <h2>Last Seen Location</h2>
                         <div class="input-group">
@@ -124,7 +112,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Submit Button Area -->
                 <div class="form-submit-area">
                     <button type="submit" class="btn-primary">Submit Report</button>
                     <div id="message" class="message-display"></div>

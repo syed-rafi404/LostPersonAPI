@@ -21,10 +21,7 @@
         </header>
         <main class="page-main">
             <h1>Advanced Search</h1>
-
-            <!-- Search Form -->
             <form id="searchForm" class="search-form">
-                <!-- ... your form rows are correct ... -->
                 <div class="form-row">
                     <div class="input-group">
                         <label for="searchName">Name</label>
@@ -63,22 +60,13 @@
                     <button type="button" id="clearButton" class="btn-secondary">Clear</button>
                 </div>
             </form>
-
-            <!-- Results Section -->
             <div id="resultsCount"></div>
-
-            <div id="reportsGrid" class="reports-grid-container">
-                <!-- Search results will be inserted here by JavaScript -->
-            </div>
-
-            <!-- ** THIS IS THE CORRECT PLACEMENT ** -->
-            <!-- The pagination controls are now OUTSIDE the reportsGrid -->
+            <div id="reportsGrid" class="reports-grid-container"></div>
             <div id="paginationControls" class="pagination-controls">
                 <button id="prevButton" class="btn-secondary" disabled>Previous</button>
                 <span id="pageInfo"></span>
                 <button id="nextButton" class="btn-secondary" disabled>Next</button>
             </div>
-
         </main>
     </div>
     <script src="js/nav-role.js"></script>

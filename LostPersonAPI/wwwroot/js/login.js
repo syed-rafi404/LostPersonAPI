@@ -26,7 +26,7 @@
                 } else {
                     localStorage.removeItem('isAdmin');
                 }
-                window.location.href = '/dashboard.html'; 
+                window.location.href = '/dashboard.html';
             } else {
                 let message = 'Login failed. Please check your credentials.';
                 if (response.status === 401) message = 'Invalid username or password.';
@@ -35,7 +35,6 @@
                 errorMessageDiv.style.display = 'block';
             }
         } catch (error) {
-            console.error('Error during login:', error);
             errorMessageDiv.textContent = 'An unexpected error occurred. Please try again later.';
             errorMessageDiv.style.display = 'block';
         }

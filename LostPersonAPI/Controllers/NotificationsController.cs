@@ -14,7 +14,6 @@ namespace LostPersonAPI.Controllers
         public NotificationsController(IConfiguration configuration){ _cs = configuration.GetConnectionString("DefaultConnection")!; }
         private async Task<MySqlConnection> Open(){ var c=new MySqlConnection(_cs); await c.OpenAsync(); return c; }
 
-        // GET api/notifications?unreadOnly=true&limit=50
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] bool unreadOnly=false, [FromQuery] int limit=50)
         {
@@ -37,7 +36,6 @@ namespace LostPersonAPI.Controllers
             return Ok(list);
         }
 
-        // POST api/notifications/mark-read  { ids: [1,2,3] }
         public class MarkDto{ public int[] ids {get;set;} = Array.Empty<int>(); }
         [HttpPost("mark-read")]
         public async Task<IActionResult> MarkRead([FromBody] MarkDto dto)
@@ -54,7 +52,6 @@ namespace LostPersonAPI.Controllers
             return Ok();
         }
 
-        // Admin: unread pending count summary for badge
         [HttpGet("admin/summary")]
         [Authorize(Roles="Admin")]
         public async Task<IActionResult> AdminSummary()
@@ -63,7 +60,6 @@ namespace LostPersonAPI.Controllers
             int pendingReports;
             await using (var cmd = new MySqlCommand("SELECT COUNT(*) FROM MissingPersonReports WHERE Status='Pending'", conn))
                 pendingReports = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-            // Unread notifications for this admin
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             int unread;
             await using (var cmd2 = new MySqlCommand("SELECT COUNT(*) FROM Notifications WHERE UserId=@u AND IsRead=0", conn))
